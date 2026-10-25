@@ -27,6 +27,25 @@ def get_employee(employee_id: str = Path(..., min_length=1, max_length=20)):
     return employee
 
 
+@app.get("/reviews", response_model=list[Review])
+def get_reviews(
+    employee_id: int | None = None,
+    period_id: int | None = None,
+):
+    return service.list_reviews(
+        employee_id=employee_id,
+        period_id=period_id,
+    )
+
+
+@app.get("/reviews/{review_id}", response_model=Review)
+def get_review(review_id: int):
+    review = service.get_review(review_id)
+    if review is None:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return review
+
+
 @app.post("/api/reviews", response_model=Review, status_code=201)
 def create_review(review: ReviewCreate):
     return service.create_review(review)
