@@ -13,3 +13,61 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.filters select,
+.employee-search input {
+    padding: 6px 8px;
+    min-width: 240px;
+    font-size: 14px;
+}
+
+.employee-search {
+    position: relative;
+}
+
+.employee-options {
+    position: absolute;
+    z-index: 10;
+    left: 0;
+    right: 0;
+    max-height: 240px;
+    overflow-y: auto;
+    margin: 2px 0 0;
+    padding: 0;
+    list-style: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.employee-options li {
+    padding: 6px 8px;
+    cursor: pointer;
+}
+
+.employee-options li:hover,
+.employee-options li.active {
+    background: var(--accent-bg);
+}
+
+.muted {
+    opacity: 0.7;
+}
+
+.error {
+    color: #d33;
+}
