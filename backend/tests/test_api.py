@@ -45,6 +45,30 @@ def test_get_employee_code_too_long(client):
     assert response.status_code == 422
 
 
+def test_list_review_periods(client, review_period):
+    with patch("repository.get_all_review_periods", return_value=[review_period]):
+        response = client.get("/review-periods")
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "id": 1,
+            "name": "H1-2026",
+            "start_date": "2026-01-01",
+            "end_date": "2026-06-30",
+            "status": "Open",
+        }
+    ]
+
+
+def test_list_review_periods_empty(client):
+    with patch("repository.get_all_review_periods", return_value=[]):
+        response = client.get("/review-periods")
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
 def test_list_reviews(client, review):
     with patch("repository.get_all_reviews", return_value=[review]) as get_reviews:
         response = client.get("/reviews")

@@ -18,6 +18,19 @@ def get_all_employees() -> list[dict]:
             return cursor.fetchall()
 
 
+def get_all_review_periods() -> list[dict]:
+    with get_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute(
+                """
+                SELECT id, name, start_date, end_date, status
+                FROM review_periods
+                ORDER BY id
+                """
+            )
+            return cursor.fetchall()
+
+
 def create_review(review: ReviewCreate) -> dict:
     with get_connection() as conn:
         with conn.cursor(row_factory=dict_row) as cursor:

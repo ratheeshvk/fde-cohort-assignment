@@ -1,6 +1,6 @@
 """Shared fixtures. The repository is always mocked, so no database is required."""
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pytest
 from fastapi.testclient import TestClient
@@ -34,6 +34,17 @@ def employee():
         "department": "Engineering",
         "email": "ada@example.com",
         "status": "active",
+    }
+
+
+@pytest.fixture
+def review_period():
+    return {
+        "id": 1,
+        "name": "H1-2026",
+        "start_date": date(2026, 1, 1),
+        "end_date": date(2026, 6, 30),
+        "status": "Open",
     }
 
 
