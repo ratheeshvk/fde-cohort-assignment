@@ -17,3 +17,12 @@ class Task(BaseModel):
     description: str | None = None
     status: str
     created_at: datetime | None = None
+
+
+class Employee(BaseModel):
+    id: int
+    employee_id: str
+    name: str
+    department: str | None = None
+    email: str | None = None
+    status: str | None = None

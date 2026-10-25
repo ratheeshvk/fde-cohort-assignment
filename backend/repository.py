@@ -35,3 +35,16 @@ def create_task(task: TaskCreate) -> dict:
                 raise RuntimeError("Insert did not return a task")
             conn.commit()
             return row
+
+
+def get_all_employees() -> list[dict]:
+    with get_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute(
+                """
+                SELECT id, employee_id, name, department, email, status
+                FROM employees
+                ORDER BY id
+                """
+            )
+            return cursor.fetchall()
