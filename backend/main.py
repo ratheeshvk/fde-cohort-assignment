@@ -1,6 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Path
 from fastapi.middleware.cors import CORSMiddleware
-from importlib import import_module
 
 import service
 from models import Employee, Review, ReviewCreate
@@ -18,6 +17,14 @@ app.add_middleware(
 @app.get("/employees", response_model=list[Employee])
 def get_employees():
     return service.list_employees()
+
+
+@app.get("/employees/{employee_id}", response_model=Employee)
+def get_employee(employee_id: str = Path(..., min_length=1, max_length=20)):
+    employee = service.get_employee(employee_id)
+    if employee is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return employee
 
 
 @app.post("/api/reviews", response_model=Review, status_code=201)

@@ -26,3 +26,8 @@ def create_review(review: ReviewCreate) -> dict:
         else:
             detail = "Employee not found"
         raise HTTPException(status_code=404, detail=detail) from None
+
+def get_employee(employee_code: str) -> dict | None:
+        # Business rule: codes are stored uppercase (EMP101), so accept emp101 too
+        employee_code = employee_code.strip().upper()
+        return repository.get_employee_by_code(employee_code)
