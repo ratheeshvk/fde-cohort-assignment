@@ -25,7 +25,9 @@ class ReviewCreate(BaseModel):
 class Review(BaseModel):
     id: int
     employee_id: int
+    employee_name: str | None = None
     period_id: int
+    period_name: str | None = None
     quality_rating: int
     delivery_rating: int
     teamwork_rating: int
