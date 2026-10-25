@@ -1,11 +1,12 @@
 """Pydantic model validation tests."""
 
+from datetime import date
 from decimal import Decimal
 
 import pytest
 from pydantic import ValidationError
 
-from models import Employee, Review, ReviewCreate
+from models import Employee, Review, ReviewCreate, ReviewPeriod
 
 RATING_FIELDS = ["quality_rating", "delivery_rating", "teamwork_rating"]
 
@@ -57,6 +58,30 @@ def test_review_coerces_decimal_average(review):
     parsed = Review(**{**review, "average_rating": Decimal("3.67")})
 
     assert parsed.average_rating == pytest.approx(3.67)
+
+
+def test_review_period_accepts_dates(review_period):
+    period = ReviewPeriod(**review_period)
+
+    assert period.start_date == date(2026, 1, 1)
+    assert period.end_date == date(2026, 6, 30)
+    assert period.status == "Open"
+
+
+def test_review_period_status_defaults_to_none():
+    period = ReviewPeriod(
+        id=1,
+        name="H1-2026",
+        start_date="2026-01-01",
+        end_date="2026-06-30",
+    )
+
+    assert period.status is None
+
+
+def test_review_period_requires_name():
+    with pytest.raises(ValidationError):
+        ReviewPeriod(id=1, start_date="2026-01-01", end_date="2026-06-30")
 
 
 def test_employee_optional_fields_default_to_none():

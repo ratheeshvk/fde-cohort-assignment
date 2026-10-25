@@ -11,6 +11,10 @@ def list_employees() -> list[dict]:
     return repository.get_all_employees()
 
 
+def list_review_periods() -> list[dict]:
+    return repository.get_all_review_periods()
+
+
 def list_reviews(
     employee_id: int | None = None,
     period_id: int | None = None,

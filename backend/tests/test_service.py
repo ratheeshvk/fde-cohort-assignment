@@ -15,6 +15,11 @@ def test_list_employees_returns_repository_rows(employee):
         assert service.list_employees() == [employee]
 
 
+def test_list_review_periods_returns_repository_rows(review_period):
+    with patch("repository.get_all_review_periods", return_value=[review_period]):
+        assert service.list_review_periods() == [review_period]
+
+
 @pytest.mark.parametrize("raw_code", ["EMP101", "emp101", "  Emp101  "])
 def test_get_employee_normalizes_code(employee, raw_code):
     with patch("repository.get_employee_by_code", return_value=employee) as get_employee:

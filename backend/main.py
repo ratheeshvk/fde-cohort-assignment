@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Path
 from fastapi.middleware.cors import CORSMiddleware
 
 import service
-from models import Employee, Review, ReviewCreate
+from models import Employee, Review, ReviewCreate, ReviewPeriod
 
 app = FastAPI(title="Classroom Fullstack Assignment")
 
@@ -25,6 +25,11 @@ def get_employee(employee_id: str = Path(..., min_length=1, max_length=20)):
     if employee is None:
         raise HTTPException(status_code=404, detail="Employee not found")
     return employee
+
+
+@app.get("/review-periods", response_model=list[ReviewPeriod])
+def get_review_periods():
+    return service.list_review_periods()
 
 
 @app.get("/reviews", response_model=list[Review])
