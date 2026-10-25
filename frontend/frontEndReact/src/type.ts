@@ -31,6 +31,18 @@ export interface Review {
 export interface ReviewPeriod {
     id: number;
     name: string;
+    start_date?: string;
+    end_date?: string;
+    status?: string;
+}
+
+export interface ReviewCreate {
+    employee_id: number;
+    period_id: number;
+    quality_rating: number;
+    delivery_rating: number;
+    teamwork_rating: number;
+    comments: string | null;
 }
 
 export interface ReviewFilters {
