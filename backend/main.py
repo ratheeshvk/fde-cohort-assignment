@@ -3,10 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from importlib import import_module
 
 import service
-from models import Employee
-
-get_tasks_router = import_module("01_get_tasks").router
-create_task_router = import_module("02_create_task").router
+from models import Employee, Review, ReviewCreate
 
 app = FastAPI(title="Classroom Fullstack Assignment")
 
@@ -18,10 +15,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(get_tasks_router)
-app.include_router(create_task_router)
-
-
 @app.get("/employees", response_model=list[Employee])
 def get_employees():
     return service.list_employees()
+
+
+@app.post("/api/reviews", response_model=Review, status_code=201)
+def create_review(review: ReviewCreate):
+    return service.create_review(review)
