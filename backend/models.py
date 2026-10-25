@@ -2,22 +2,7 @@
 
 from datetime import datetime
 
-from pydantic import BaseModel
-
-
-class TaskCreate(BaseModel):
-    title: str
-    description: str | None = None
-    status: str = "todo"
-
-
-class Task(BaseModel):
-    id: int
-    title: str
-    description: str | None = None
-    status: str
-    created_at: datetime | None = None
-
+from pydantic import BaseModel, Field
 
 class Employee(BaseModel):
     id: int
@@ -27,24 +12,23 @@ class Employee(BaseModel):
     email: str | None = None
     status: str | None = None
 
+
 class ReviewCreate(BaseModel):
     employee_id: int
     period_id: int
-    quality_rating: int
-    delivery_rating: int
-    teamwork_rating: int
+    quality_rating: int = Field(ge=1, le=5)
+    delivery_rating: int = Field(ge=1, le=5)
+    teamwork_rating: int = Field(ge=1, le=5)
     comments: str | None = None
 
 
 class Review(BaseModel):
     id: int
     employee_id: int
-    employee_name: str
     period_id: int
-    period_name: str
     quality_rating: int
     delivery_rating: int
     teamwork_rating: int
-    average_rating: Decimal
+    average_rating: float
     comments: str | None = None
     created_at: datetime | None = None
