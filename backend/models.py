@@ -26,3 +26,25 @@ class Employee(BaseModel):
     department: str | None = None
     email: str | None = None
     status: str | None = None
+
+class ReviewCreate(BaseModel):
+    employee_id: int
+    period_id: int
+    quality_rating: int
+    delivery_rating: int
+    teamwork_rating: int
+    comments: str | None = None
+
+
+class Review(BaseModel):
+    id: int
+    employee_id: int
+    employee_name: str
+    period_id: int
+    period_name: str
+    quality_rating: int
+    delivery_rating: int
+    teamwork_rating: int
+    average_rating: Decimal
+    comments: str | None = None
+    created_at: datetime | None = None
