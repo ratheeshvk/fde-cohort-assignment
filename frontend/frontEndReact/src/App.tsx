@@ -1,10 +1,12 @@
-import Header from './components/Header'
+import Header from './components/header'
+import ReviewList from './components/ReviewList'
 import './App.css'
 
 function App() {
   return (
     <>
-     <Header title="Patient Encounters" />
+      <Header title="Performance Reviews" />
+      <ReviewList />
     </>
   )
 }
