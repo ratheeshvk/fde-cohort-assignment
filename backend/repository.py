@@ -57,3 +57,16 @@ def create_review(review: ReviewCreate) -> dict:
                 raise RuntimeError("Insert did not return a review")
             conn.commit()
             return row
+
+def get_employee_by_code(employee_code: str) -> dict | None:
+        with get_connection() as conn:
+            with conn.cursor(row_factory=dict_row) as cursor:
+                cursor.execute(
+                    """
+                    SELECT id, employee_id, name, department, email, status
+                    FROM employees
+                    WHERE employee_id = %s
+                    """,
+                    (employee_code,),
+                )
+                return cursor.fetchone()
