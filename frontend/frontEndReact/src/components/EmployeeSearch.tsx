@@ -1,3 +1,5 @@
+// #  Add comments for every line of code 
+// Import necessary modules and types for the component 
 import { useState } from 'react';
 import type { Employee } from '../type';
 
