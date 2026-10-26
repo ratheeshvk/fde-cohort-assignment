@@ -8,6 +8,31 @@ frontend/   React + TypeScript app (frontEndReact/)
 sql/        Schema and seed scripts
 ```
 
+## Branch naming
+
+Branch off `main` and use one of these three prefixes only:
+
+| Prefix | Use for | Example |
+|---|---|---|
+| `feature/` | New functionality or enhancements | `feature/review-pagination` |
+| `bug/` | Fixing something that doesn't work as intended | `bug/review-periods-seed` |
+| `hotfix/` | Urgent fix for a broken `main` (build fails, app won't start) | `hotfix/header-import` |
+
+Rules:
+
+- Format: `<prefix>/<short-description>`
+- Lowercase letters, numbers, and hyphens only. No spaces, underscores, or names.
+- Keep it short and descriptive (2-5 words).
+- Don't commit directly to `main`; open a pull request from your branch.
+
+Valid names match: `^(feature|bug|hotfix)/[a-z0-9]+(-[a-z0-9]+)*$`
+
+```bash
+git checkout main
+git pull
+git checkout -b feature/review-pagination
+```
+
 ## Prerequisites
 
 - Python 3.11+
