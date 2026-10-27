@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Performance Review Database (PostgreSQL)
--- Tables: employees, review_periods, performance_reviews
+-- Tables: employees, review_periods, performance_reviews, admins
 -- =====================================================================
 
 -- Optional: create and connect to a dedicated database
@@ -65,5 +65,16 @@ CREATE TABLE performance_reviews (
 -- Helpful indexes for lookups
 CREATE INDEX idx_reviews_employee ON performance_reviews(employee_id);
 CREATE INDEX idx_reviews_period   ON performance_reviews(period_id);
+
+-- ---------------------------------------------------------------------
+-- admins (login accounts; not dropped above, so re-running keeps logins)
+-- Only an argon2 hash is stored. Create the first admin with backend/init_db.py.
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS admins (
+    id             SERIAL       PRIMARY KEY,
+    username       VARCHAR(50)  NOT NULL UNIQUE,
+    password_hash  TEXT         NOT NULL,
+    created_at     TIMESTAMP    DEFAULT NOW()
+);
 
 COMMIT;

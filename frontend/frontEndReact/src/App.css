@@ -88,6 +88,94 @@ th {
     overflow-x: auto;
 }
 
+.app-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+}
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.user-menu button {
+    padding: 6px 12px;
+    border: 1px solid #1a73e8;
+    border-radius: 4px;
+    background: transparent;
+    color: #1a73e8;
+    cursor: pointer;
+}
+
+.loading {
+    padding: 32px;
+}
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100svh;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.login-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 360px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    text-align: left;
+}
+
+.login-card h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.login-card p {
+    margin: 0;
+}
+
+.login-card label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.login-card input {
+    padding: 8px;
+    font: inherit;
+    font-size: 14px;
+}
+
+.login-card .primary {
+    padding: 10px;
+    border: 1px solid #1a73e8;
+    border-radius: 4px;
+    background: #1a73e8;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.login-card .primary:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
 .form-panel {
     grid-column: 1 / -1;
 }

@@ -151,3 +151,16 @@ def get_employee_by_code(employee_code: str) -> dict | None:
                     (employee_code,),
                 )
                 return cursor.fetchone()
+
+def fetch_admin_by_username(username: str) -> dict | None:
+    with get_connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cursor:
+            cursor.execute(
+                """
+                SELECT id, username, password_hash
+                FROM admins
+                WHERE username = %s
+                """,
+                (username,),
+            )
+            return cursor.fetchone()

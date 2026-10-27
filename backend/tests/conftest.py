@@ -6,7 +6,8 @@ import pytest
 from fastapi.testclient import TestClient
 from psycopg.errors import ForeignKeyViolation
 
-from main import app
+from main import app, require_admin
+from models import AdminUser
 
 
 class _ForeignKeyError(ForeignKeyViolation):
@@ -20,8 +21,28 @@ class _ForeignKeyError(ForeignKeyViolation):
         return type("Diag", (), {"constraint_name": self._constraint_name})()
 
 
+@pytest.fixture(autouse=True)
+def jwt_settings(monkeypatch):
+    monkeypatch.setenv("JWT_SECRET", "test-secret-that-is-long-enough-for-hs256-signing")
+    monkeypatch.setenv("JWT_EXPIRE_MINUTES", "480")
+
+
 @pytest.fixture
-def client():
+def admin():
+    return AdminUser(id=1, username="admin")
+
+
+@pytest.fixture
+def client(admin):
+    """A client that is already logged in, for testing the protected routes."""
+    app.dependency_overrides[require_admin] = lambda: admin
+    yield TestClient(app)
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def anon_client():
+    """A client with no login cookie, for testing auth itself."""
     return TestClient(app)
 
 
