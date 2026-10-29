@@ -1,9 +1,36 @@
+import type { AdminUser, LoginRequest } from './auth';
 import type { Employee, Review, ReviewCreate, ReviewFilters, ReviewPeriod } from './type';
 
 const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000';
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, init);
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
+// App registers this so any 401 (expired or missing login) sends the user back to the login screen.
+let onUnauthorized: () => void = () => {};
+
+export function setUnauthorizedHandler(handler: () => void) {
+  onUnauthorized = handler;
+}
+
+interface RequestOptions extends RequestInit {
+  // Auth calls handle their own 401s instead of triggering a logout
+  skipUnauthorizedHandler?: boolean;
+}
+
+async function request<T>(path: string, init: RequestOptions = {}): Promise<T> {
+  const { skipUnauthorizedHandler, ...fetchInit } = init;
+  // credentials: 'include' sends the httponly login cookie with every request
+  const res = await fetch(`${API_BASE}${path}`, { ...fetchInit, credentials: 'include' });
+  if (res.status === 401 && !skipUnauthorizedHandler) {
+    onUnauthorized();
+  }
   if (!res.ok) {
     // FastAPI returns { detail: string } for HTTPException and { detail: [...] } for validation errors
     const body = await res.json().catch(() => null);
@@ -14,9 +41,35 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
         : Array.isArray(detail)
           ? detail.map((d: { msg?: string }) => d.msg).join('; ')
           : `${res.status} ${res.statusText}`;
-    throw new Error(message);
+    throw new ApiError(res.status, message);
+  }
+  if (res.status === 204) {
+    return undefined as T;
   }
   return res.json() as Promise<T>;
+}
+
+export function login(credentials: LoginRequest): Promise<AdminUser> {
+  return request<AdminUser>('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(credentials),
+    skipUnauthorizedHandler: true,
+  });
+}
+
+export function logout(): Promise<void> {
+  return request<void>('/api/auth/logout', { method: 'POST', skipUnauthorizedHandler: true });
+}
+
+// Returns the logged-in admin, or null when no one is logged in.
+export async function getMe(): Promise<AdminUser | null> {
+  try {
+    return await request<AdminUser>('/api/auth/me', { skipUnauthorizedHandler: true });
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 401) return null;
+    throw err;
+  }
 }
 
 function getJson<T>(path: string): Promise<T> {

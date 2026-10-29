@@ -42,3 +42,13 @@ class Review(BaseModel):
     average_rating: float
     comments: str | None = None
     created_at: datetime | None = None
+
+
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=50)
+    password: str = Field(min_length=1, max_length=256)
+
+
+class AdminUser(BaseModel):
+    id: int
+    username: str
