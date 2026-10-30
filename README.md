@@ -68,7 +68,17 @@ Edit `DATABASE_URL` to match your database:
 DATABASE_URL=postgresql://postgres:<password>@localhost:5432/fde
 ```
 
-Install dependencies and start the API:
+Also set the auth values in the same file:
+
+| Variable | Purpose |
+|---|---|
+| `JWT_SECRET` | Secret used to sign login tokens. Use a long random string. |
+| `JWT_EXPIRE_MINUTES` | How long a login lasts (default `480`). |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | The first admin account, created by `init_db.py`. |
+| `CORS_ORIGINS` | Comma-separated frontend origins allowed to send the login cookie (default `http://localhost:5173`). |
+| `COOKIE_SECURE` | Set to `true` once the site runs on HTTPS. |
+
+Install dependencies, create the first admin, and start the API:
 
 ```bash
 cd backend
@@ -76,8 +86,11 @@ python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
+python init_db.py                # creates the admin from ADMIN_USERNAME / ADMIN_PASSWORD
 uvicorn main:app --reload
 ```
+
+There is no sign-up endpoint. `init_db.py` is safe to re-run: an existing admin is left unchanged, so it never resets a password.
 
 - API: http://localhost:8000
 - Swagger docs: http://localhost:8000/docs
@@ -104,6 +117,28 @@ Production build: `npm run build` (output in `dist/`).
 
 ## APIs
 
+### Admin auth
+
+Login sets an httponly `access_token` cookie (a signed JWT). Every other endpoint requires that cookie and returns `401 NOT_AUTHENTICATED` without it.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/login` | Log in with `{"username", "password"}`. Returns the admin (`id`, `username`) and sets the cookie. `401 INVALID_CREDENTIALS` on a wrong username or password. |
+| POST | `/api/auth/logout` | Clear the cookie. Returns `204`; works even if the token has expired. |
+| GET | `/api/auth/me` | Return the logged-in admin, or `401` if not logged in. |
+
+```bash
+# log in and save the cookie
+curl -c cookies.txt -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "change-me"}'
+
+# send the cookie on later requests
+curl -b cookies.txt http://localhost:8000/api/auth/me
+```
+
+### Protected endpoints (admin login required)
+
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/employees` | List all employees |
@@ -116,7 +151,7 @@ Production build: `npm run build` (output in `dist/`).
 ### Example: submit a review
 
 ```bash
-curl -X POST http://localhost:8000/api/reviews \
+curl -b cookies.txt -X POST http://localhost:8000/api/reviews \
   -H "Content-Type: application/json" \
   -d '{
     "employee_id": 1,
